@@ -34,31 +34,7 @@ class RegisterScreen extends StatelessWidget {
               margin: EdgeInsets.symmetric(horizontal: 40),
               child: TextField(
                 decoration: InputDecoration(
-                  labelText: "Name"
-                ),
-              ),
-            ),
-
-            SizedBox(height: size.height * 0.03),
-
-            Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.symmetric(horizontal: 40),
-              child: TextField(
-                decoration: InputDecoration(
-                  labelText: "Mobile Number"
-                ),
-              ),
-            ),
-
-            SizedBox(height: size.height * 0.03),
-
-            Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.symmetric(horizontal: 40),
-              child: TextField(
-                decoration: InputDecoration(
-                  labelText: "Username"
+                  labelText: "Mail"
                 ),
               ),
             ),
@@ -71,6 +47,19 @@ class RegisterScreen extends StatelessWidget {
               child: TextField(
                 decoration: InputDecoration(
                   labelText: "Password"
+                ),
+                obscureText: true,
+              ),
+            ),
+
+            SizedBox(height: size.height * 0.03),
+
+            Container(
+              alignment: Alignment.center,
+              margin: EdgeInsets.symmetric(horizontal: 40),
+              child: TextField(
+                decoration: InputDecoration(
+                  labelText: "Confirm Password"
                 ),
                 obscureText: true,
               ),

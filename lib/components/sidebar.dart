@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class Sidebar extends StatelessWidget {
   final String email;
 
@@ -44,8 +43,8 @@ class Sidebar extends StatelessWidget {
             leading: const Icon(Icons.apple_rounded),
             title: const Text('Fruits Classification'),
             onTap: () {
-              if (ModalRoute.of(context)?.settings.name != '/fruit') {
-                Navigator.pushReplacementNamed(context, '/fruit');
+              if (ModalRoute.of(context)?.settings.name != '/login') {
+                Navigator.pushReplacementNamed(context, '/login');
               } else {
                 Navigator.pop(context);
               }
@@ -55,8 +54,8 @@ class Sidebar extends StatelessWidget {
             leading: const Icon(Icons.auto_graph),
             title: const Text('Stock Prediction'),
             onTap: () {
-              if (ModalRoute.of(context)?.settings.name != '/stock') {
-                Navigator.pushReplacementNamed(context, '/stock');
+              if (ModalRoute.of(context)?.settings.name != '/register') {
+                Navigator.pushReplacementNamed(context, '/register');
               } else {
                 Navigator.pop(context);
               }
@@ -66,8 +65,8 @@ class Sidebar extends StatelessWidget {
             leading: const Icon(Icons.smart_toy_outlined),
             title: const Text('Models'),
             onTap: () {
-              if (ModalRoute.of(context)?.settings.name != '/models') {
-                Navigator.pushReplacementNamed(context, '/models');
+              if (ModalRoute.of(context)?.settings.name != '/login') {
+                Navigator.pushReplacementNamed(context, '/login');
               } else {
                 Navigator.pop(context);
               }

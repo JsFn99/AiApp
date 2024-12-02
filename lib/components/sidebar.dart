@@ -32,19 +32,22 @@ class Sidebar extends StatelessWidget {
             },
           ),
           ListTile(
-            //clothes icon
             leading: const Icon(Icons.shopping_bag_outlined),
             title: const Text('Fashion Mnist'),
             onTap: () {
-              Navigator.pop(context);
+              if (ModalRoute.of(context)?.settings.name != '/fashion') {
+                Navigator.pushReplacementNamed(context, '/fashion');
+              } else {
+                Navigator.pop(context);
+              }
             },
           ),
           ListTile(
             leading: const Icon(Icons.apple_rounded),
             title: const Text('Fruits Classification'),
             onTap: () {
-              if (ModalRoute.of(context)?.settings.name != '/login') {
-                Navigator.pushReplacementNamed(context, '/login');
+              if (ModalRoute.of(context)?.settings.name != '/fruits') {
+                Navigator.pushReplacementNamed(context, '/fruits');
               } else {
                 Navigator.pop(context);
               }
@@ -62,11 +65,11 @@ class Sidebar extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.smart_toy_outlined),
-            title: const Text('Models'),
+            leading: const Icon(Icons.sentiment_satisfied_alt),
+            title: const Text('Sentiment Analysis'),
             onTap: () {
-              if (ModalRoute.of(context)?.settings.name != '/login') {
-                Navigator.pushReplacementNamed(context, '/login');
+              if (ModalRoute.of(context)?.settings.name != '/sentiment') {
+                Navigator.pushReplacementNamed(context, '/sentiment');
               } else {
                 Navigator.pop(context);
               }

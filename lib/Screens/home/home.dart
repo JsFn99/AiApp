@@ -19,7 +19,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _fetchUserEmail() {
-    // Simulating fetching the user's email. You can remove or modify this as needed.
     setState(() {
       userEmail = "user@example.com";
     });
@@ -36,14 +35,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         centerTitle: true,
         backgroundColor:
-            const Color(0xFF2661FA), // Dynamic color from the theme
+            const Color(0xFF2661FA), 
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
-              // Log out and navigate to the login screen (you can remove this if you don't need Firebase).
               Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => LoginScreen()),
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
               );
             },
           ),

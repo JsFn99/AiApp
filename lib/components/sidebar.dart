@@ -75,6 +75,17 @@ class Sidebar extends StatelessWidget {
               }
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.psychology),
+            title: const Text('Psychologist'),
+            onTap: () {
+              if (ModalRoute.of(context)?.settings.name != '/chat') {
+                Navigator.pushReplacementNamed(context, '/chat');
+              } else {
+                Navigator.pop(context);
+              }
+            },
+          ),
         ],
       ),
     );

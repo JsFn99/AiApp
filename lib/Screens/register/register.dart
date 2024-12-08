@@ -15,8 +15,8 @@ class RegisterScreen extends StatelessWidget {
           children: <Widget>[
             Container(
               alignment: Alignment.centerLeft,
-              padding: EdgeInsets.symmetric(horizontal: 40),
-              child: Text(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: const Text(
                 "REGISTER",
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -28,16 +28,16 @@ class RegisterScreen extends StatelessWidget {
             SizedBox(height: size.height * 0.03),
             Container(
               alignment: Alignment.center,
-              margin: EdgeInsets.symmetric(horizontal: 40),
-              child: TextField(
+              margin: const EdgeInsets.symmetric(horizontal: 40),
+              child: const TextField(
                 decoration: InputDecoration(labelText: "Mail"),
               ),
             ),
             SizedBox(height: size.height * 0.03),
             Container(
               alignment: Alignment.center,
-              margin: EdgeInsets.symmetric(horizontal: 40),
-              child: TextField(
+              margin: const EdgeInsets.symmetric(horizontal: 40),
+              child: const TextField(
                 decoration: InputDecoration(labelText: "Password"),
                 obscureText: true,
               ),
@@ -45,8 +45,8 @@ class RegisterScreen extends StatelessWidget {
             SizedBox(height: size.height * 0.03),
             Container(
               alignment: Alignment.center,
-              margin: EdgeInsets.symmetric(horizontal: 40),
-              child: TextField(
+              margin: const EdgeInsets.symmetric(horizontal: 40),
+              child: const TextField(
                 decoration: InputDecoration(labelText: "Confirm Password"),
                 obscureText: true,
               ),
@@ -54,7 +54,7 @@ class RegisterScreen extends StatelessWidget {
             SizedBox(height: size.height * 0.05),
             Container(
               alignment: Alignment.centerRight,
-              margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
@@ -68,12 +68,12 @@ class RegisterScreen extends StatelessWidget {
                   width: size.width * 0.5,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(80.0),
-                      gradient: LinearGradient(colors: [
+                      gradient: const LinearGradient(colors: [
                         Color.fromARGB(255, 255, 136, 34),
                         Color.fromARGB(255, 255, 177, 41)
                       ])),
                   padding: const EdgeInsets.all(0),
-                  child: Text(
+                  child: const Text(
                     "SIGN UP",
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -86,13 +86,13 @@ class RegisterScreen extends StatelessWidget {
             ),
             Container(
               alignment: Alignment.centerRight,
-              margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
               child: GestureDetector(
                 onTap: () => {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()))
+                      MaterialPageRoute(builder: (context) => const LoginScreen()))
                 },
-                child: Text(
+                child: const Text(
                   "Already Have an Account? Sign in",
                   style: TextStyle(
                       fontSize: 12,

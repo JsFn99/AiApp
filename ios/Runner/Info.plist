@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<!-- Permissions for Camera and Photo Library -->
+	<key>NSCameraUsageDescription</key>
+	<string>We need access to your camera to take pictures of fruits for prediction.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your photo library to pick images for prediction.</string>
 </dict>
 </plist>

@@ -15,8 +15,8 @@ class LoginScreen extends StatelessWidget {
           children: <Widget>[
             Container(
               alignment: Alignment.centerLeft,
-              padding: EdgeInsets.symmetric(horizontal: 40),
-              child: Text(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: const Text(
                 "LOGIN",
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -28,24 +28,24 @@ class LoginScreen extends StatelessWidget {
             SizedBox(height: size.height * 0.03),
             Container(
               alignment: Alignment.center,
-              margin: EdgeInsets.symmetric(horizontal: 40),
-              child: TextField(
+              margin: const EdgeInsets.symmetric(horizontal: 40),
+              child: const TextField(
                 decoration: InputDecoration(labelText: "Username"),
               ),
             ),
             SizedBox(height: size.height * 0.03),
             Container(
               alignment: Alignment.center,
-              margin: EdgeInsets.symmetric(horizontal: 40),
-              child: TextField(
+              margin: const EdgeInsets.symmetric(horizontal: 40),
+              child: const TextField(
                 decoration: InputDecoration(labelText: "Password"),
                 obscureText: true,
               ),
             ),
             Container(
               alignment: Alignment.centerRight,
-              margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-              child: Text(
+              margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+              child: const Text(
                 "Forgot your password?",
                 style: TextStyle(fontSize: 12, color: Color(0XFF2661FA)),
               ),
@@ -53,7 +53,7 @@ class LoginScreen extends StatelessWidget {
             SizedBox(height: size.height * 0.05),
             Container(
               alignment: Alignment.centerRight,
-              margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
@@ -67,12 +67,12 @@ class LoginScreen extends StatelessWidget {
                   width: size.width * 0.5,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(80.0),
-                      gradient: LinearGradient(colors: [
+                      gradient: const LinearGradient(colors: [
                         Color.fromARGB(255, 255, 136, 34),
                         Color.fromARGB(255, 255, 177, 41)
                       ])),
                   padding: const EdgeInsets.all(0),
-                  child: Text(
+                  child: const Text(
                     "LOGIN",
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -85,13 +85,13 @@ class LoginScreen extends StatelessWidget {
             ),
             Container(
               alignment: Alignment.centerRight,
-              margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
               child: GestureDetector(
                 onTap: () => {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => RegisterScreen()))
+                      MaterialPageRoute(builder: (context) => const RegisterScreen()))
                 },
-                child: Text(
+                child: const Text(
                   "Don't Have an Account? Sign up",
                   style: TextStyle(
                       fontSize: 12,

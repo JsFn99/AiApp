@@ -55,7 +55,7 @@ class _SentimentScreenState extends State<SentimentScreen> {
         ),
         backgroundColor: const Color(0xFF2661FA),
       ),
-      drawer: const Sidebar(email: 'test@gmail.com'),  // Sidebar added here
+      drawer: const Sidebar(),  // Sidebar added here
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(10.0),

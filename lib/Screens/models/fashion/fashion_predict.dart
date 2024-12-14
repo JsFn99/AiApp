@@ -40,7 +40,7 @@ class _FashionPredictState extends State<FashionPredict> {
         title: const Text("Fashion MNIST Prediction", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
         backgroundColor: const Color(0xFF2661FA),
       ),
-      drawer: const Sidebar(email: 'test@gmail.com',),
+      drawer: const Sidebar(),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),

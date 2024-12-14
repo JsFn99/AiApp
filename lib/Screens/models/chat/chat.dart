@@ -90,7 +90,6 @@ class _ChatBotState extends State<ChatPage> {
         centerTitle: true,
       ),
       drawer: Sidebar(
-        email: 'test@gmail.com',
       ),
       body: SafeArea(
         child: Column(

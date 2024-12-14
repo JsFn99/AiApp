@@ -37,6 +37,8 @@ class _ChatBotState extends State<ChatPage> {
 
     try {
       var response = await http.post(
+        //Uri.parse('http://20.50.10.235:11434/api/generate'),
+        //Uri.parse('http://10.0.2.2:11434/api/generate'),
         Uri.parse('http://localhost:11434/api/generate'),
         headers: {"Content-Type": "application/json"},
         body: json.encode({"model": "llama3", "prompt": initialPrompt}),
@@ -228,12 +230,21 @@ class _ChatBotState extends State<ChatPage> {
 
       queryController.clear();
 
+      String prompt = "You are a psychologist. Keep your answers short no more than 2-3 sentences. The user says : " + query;
+
+      if (messages.length > 1) {
+        String lastMessage = messages[messages.length - 2]['message']!;
+        String lastResponse = messages[messages.length - 1]['message']!;
+        prompt = "You are a psychologist. Keep your answers short no more than 2-3 sentences. The last exchange was : User : " + lastMessage + " Model : " + lastResponse + ". Now The user says: " + query;
+      }
+
       try {
         var response = await http.post(
+          //Uri.parse('http://20.50.10.235:11434/api/generate'),
           //Uri.parse('http://10.0.2.2:11434/api/generate'),
-        Uri.parse('http://localhost:11434/api/generate'),
+          Uri.parse('http://localhost:11434/api/generate'),
           headers: {"Content-Type": "application/json"},
-          body: json.encode({"model": "llama3", "prompt": query}),
+          body: json.encode({"model": "llama3", "prompt": prompt}),
         );
 
         if (response.statusCode == 200) {

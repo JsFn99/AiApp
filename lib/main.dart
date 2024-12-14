@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
 import 'package:jasser_app/Screens/home/home.dart';
 import 'package:jasser_app/Screens/login/login.dart';
 import 'package:jasser_app/Screens/register/register.dart';
@@ -10,6 +11,8 @@ import 'Screens/models/sentiment/sentiment_screen.dart';
 import 'Screens/models/yolo/camera_screen.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -20,8 +23,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Ai App',
-      home: const HomeScreen(),
+      title: 'AI App',
+      home: const LoginScreen(),
       routes: {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),

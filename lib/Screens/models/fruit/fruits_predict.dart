@@ -97,7 +97,7 @@ class _FruitsPredictPageState extends State<FruitsPredictPage> {
         ),
         backgroundColor: const Color(0xFF2661FA),
       ),
-      drawer: Sidebar(email: 'test@gmail.com',), // Add the Sidebar widget here
+      drawer: Sidebar(), // Add the Sidebar widget here
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),

@@ -1,21 +1,20 @@
-import 'dart:typed_data';
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:tflite_flutter/tflite_flutter.dart';
-import 'package:image/image.dart' as img;
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:image/image.dart' as img;
+import 'package:image_picker/image_picker.dart';
+import 'package:jasser_app/Screens/models/fruit/prediction_result.dart';
+import 'package:tflite_flutter/tflite_flutter.dart';
+
 import '../../../components/sidebar.dart';
 
 class FruitsPredictPage extends StatefulWidget {
   @override
-  _FruitsPredictPageState createState() => _FruitsPredictPageState();
+  _FruitPredictionPageState createState() => _FruitPredictionPageState();
 }
 
-class _FruitsPredictPageState extends State<FruitsPredictPage> {
+class _FruitPredictionPageState extends State<FruitsPredictPage> {
   late Interpreter _interpreter;
-  File? _imageFile;
-  String _predictionResult = "No prediction yet";
-  final picker = ImagePicker();
+  final List<String> classes = ['Apple', 'Banana', 'Orange'];
 
   @override
   void initState() {
@@ -32,169 +31,149 @@ class _FruitsPredictPageState extends State<FruitsPredictPage> {
     }
   }
 
-  Future<void> _pickImage(bool fromCamera) async {
-    final pickedFile = await picker.pickImage(
-      source: fromCamera ? ImageSource.camera : ImageSource.gallery,
+  bool allowedFile(String filename) {
+    final ext = filename.split('.').last.toLowerCase();
+    return ['jpg', 'jpeg', 'png'].contains(ext);
+  }
+
+  Future<List<List<List<List<double>>>>?> _loadImage(File image) async {
+    img.Image? imageTemp = img.decodeImage(image.readAsBytesSync());
+    if (imageTemp == null) return null;
+
+    imageTemp = img.copyResize(imageTemp, width: 32, height: 32);
+
+    List<List<List<List<double>>>> input = List.generate(
+      1,
+          (_) => List.generate(
+        32,
+            (y) => List.generate(
+          32,
+              (x) {
+            final pixel = imageTemp?.getPixel(x, y);
+            final r = img.getRed(pixel!) * 1.0;
+            final g = img.getGreen(pixel) * 1.0;
+            final b = img.getBlue(pixel) * 1.0;
+            return [r, g, b];
+          },
+        ),
+      ),
     );
 
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
-      _predictImage();
+    return input;
+  }
+
+  Future<String> _predictFruit(File image) async {
+    try {
+      if (!allowedFile(image.path)) {
+        return "Invalid file format. Only JPG, JPEG, and PNG are allowed.";
+      }
+
+      List<List<List<List<double>>>>? inputImage = await _loadImage(image);
+      if (inputImage == null) {
+        return "Error loading image.";
+      }
+
+      var output = List.filled(3, 0.0).reshape([1, 3]);
+      _interpreter.run(inputImage, output);
+
+      List<double> probabilities = output[0];
+      String predictedLabel = classes[probabilities.indexOf(probabilities.reduce((a, b) => a > b ? a : b))];
+
+      return predictedLabel;
+    } catch (e) {
+      return "Error: ${e.toString()}";
     }
   }
 
-  Future<void> _predictImage() async {
-    if (_imageFile == null) return;
+  Future<File?> _pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+    if (pickedFile != null) {
+      return File(pickedFile.path);
+    }
+    return null;
+  }
 
-    try {
-      var imageBytes = await _imageFile!.readAsBytes();
-      var image = img.decodeImage(Uint8List.fromList(imageBytes))!;
-      var resizedImage = img.copyResize(image, width: 224, height: 224);
+  void _onImageSelected(File? image) async {
+    if (image != null) {
+      String prediction = await _predictFruit(image);
 
-      var input = List.generate(224, (i) => List.generate(224, (j) {
-        var pixel = resizedImage.getPixel(j, i);
-        var r = img.getRed(pixel) / 255.0;
-        var g = img.getGreen(pixel) / 255.0;
-        var b = img.getBlue(pixel) / 255.0;
-        return [r, g, b];
-      }));
-
-      var inputTensor = [input.expand((i) => i).toList()];
-      var output = List.generate(1, (i) => List.filled(3, 0.0));
-
-      _interpreter.run(inputTensor, output);
-
-      setState(() {
-        _predictionResult = output[0].toString();
-      });
-
+      // Navigate to the PredictionResultPage
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => PredictionResultPage(prediction: _predictionResult),
+          builder: (context) => PredictionResultPage(
+            prediction: prediction,
+            selectedImage: image,
+          ),
         ),
       );
-    } catch (e) {
-      print("Error running inference: $e");
     }
   }
 
   @override
-  void dispose() {
-    _interpreter.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Fruit Prediction",
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-        ),
+        title: const Text("Fruit Prediction"),
         backgroundColor: const Color(0xFF2661FA),
       ),
-      drawer: Sidebar(), // Add the Sidebar widget here
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _imageFile != null
-                  ? ClipRRect(
-                borderRadius: BorderRadius.circular(15.0),
-                child: Image.file(
-                  _imageFile!,
-                  height: 250,
-                  width: 250,
-                  fit: BoxFit.cover,
+      drawer: Sidebar(),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              "Upload or Capture an Image",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "Use the options below to select or capture an image to predict the fruit type.",
+              style: TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 40),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                GestureDetector(
+                  onTap: () async {
+                    File? image = await _pickImage(ImageSource.gallery);
+                    _onImageSelected(image);
+                  },
+                  child: Column(
+                    children: [
+                      Icon(Icons.photo, size: 80, color: Colors.blue),
+                      const SizedBox(height: 10),
+                      const Text(
+                        "Gallery",
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
                 ),
-              )
-                  : Column(
-                children: const [
-                  Icon(
-                    Icons.image,
-                    size: 100,
-                    color: Colors.grey,
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    "No image selected",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 40),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () => _pickImage(false),
-                    icon: const Icon(Icons.photo_library, color: Colors.white),
-                    label: const Text("Gallery", style: TextStyle(color: Colors.white)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2661FA),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 15,
+                GestureDetector(
+                  onTap: () async {
+                    File? image = await _pickImage(ImageSource.camera);
+                    _onImageSelected(image);
+                  },
+                  child: Column(
+                    children: [
+                      Icon(Icons.camera_alt, size: 80, color: Colors.green),
+                      const SizedBox(height: 10),
+                      const Text(
+                        "Camera",
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
+                    ],
                   ),
-                  ElevatedButton.icon(
-                    onPressed: () => _pickImage(true),
-                    icon: const Icon(Icons.camera_alt, color: Colors.white),
-                    label: const Text("Camera", style: TextStyle(color: Colors.white)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2661FA),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 15,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class PredictionResultPage extends StatelessWidget {
-  final String prediction;
-
-  const PredictionResultPage({required this.prediction});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Prediction Result"),
-        backgroundColor: const Color(0xFF2661FA),
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Text(
-            "Prediction Result: $prediction",
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

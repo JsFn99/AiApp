@@ -60,8 +60,8 @@ class Sidebar extends StatelessWidget {
             leading: const Icon(Icons.auto_graph),
             title: const Text('Stock Prediction'),
             onTap: () {
-              if (ModalRoute.of(context)?.settings.name != '/register') {
-                Navigator.pushReplacementNamed(context, '/register');
+              if (ModalRoute.of(context)?.settings.name != '/stock') {
+                Navigator.pushReplacementNamed(context, '/stock');
               } else {
                 Navigator.pop(context);
               }

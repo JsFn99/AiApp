@@ -24,19 +24,20 @@ class PredictionResponse {
   }
 }
 
-Future<PredictionResponse> fetchStockPrediction(String ticker, String startDate, String endDate, int daysToPredict) async {
+Future<PredictionResponse> fetchStockPrediction(
+    String ticker, String startDate, String endDate, int daysToPredict) async {
   const String apiUrl = 'http://localhost:8000/predict/';
 
-  final response = await http.post(
-    Uri.parse(apiUrl),
-    headers: {'Content-Type': 'application/json'},
-    body: json.encode({
-      'stock_ticker': ticker,
-      'start_date': startDate,
-      'end_date': endDate,
-      'days_to_predict': daysToPredict,
-    }),
-  );
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'stock_ticker': ticker,
+        'start_date': startDate,
+        'end_date': endDate,
+        'days_to_predict': daysToPredict,
+      }),
+    );
 
   if (response.statusCode == 200) {
     return PredictionResponse.fromJson(json.decode(response.body));

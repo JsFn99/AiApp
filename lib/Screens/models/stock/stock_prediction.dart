@@ -1,7 +1,8 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:jasser_app/Screens/models/stock/prediction.dart';
-
-import '../../../components/sidebar.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:flutter/services.dart' as services;
 
 class StockPredictionScreen extends StatefulWidget {
   @override
@@ -14,43 +15,45 @@ class _StockPredictionScreenState extends State<StockPredictionScreen> {
   final TextEditingController _endDateController = TextEditingController();
   final TextEditingController _daysToPredictController = TextEditingController();
 
-  late Future<PredictionResponse> futurePrediction;
+  Uint8List? imageBytes;
 
   @override
   void initState() {
     super.initState();
-    // Initialize futurePrediction with a default value (empty response or loading)
-    futurePrediction = Future.value(PredictionResponse(
-      stockTicker: '',
-      predictionDates: [],
-      predictedPrices: [],
-      imagePath: '',
-    ));
-
-    // Set initial text field values
     _stockTickerController.text = 'AAPL';
     _startDateController.text = '2020-01-01';
     _endDateController.text = '2024-01-01';
     _daysToPredictController.text = '30';
   }
 
-  // Method to fetch stock prediction with user input
-  Future<void> _fetchPrediction() async {
+  Future<Uint8List> fetchPredictionImage() async {
     final stockTicker = _stockTickerController.text;
     final startDate = _startDateController.text;
     final endDate = _endDateController.text;
     final daysToPredict = int.parse(_daysToPredictController.text);
 
-    setState(() {
-      futurePrediction = fetchStockPrediction(stockTicker, startDate, endDate, daysToPredict);
-    });
+    final response = await http.post(
+      Uri.parse('http://localhost:8000/predict/'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'stock_ticker': stockTicker,
+        'start_date': startDate,
+        'end_date': endDate,
+        'days_to_predict': daysToPredict,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return response.bodyBytes; // Returning the image bytes
+    } else {
+      throw Exception('Failed to fetch prediction');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Stock Price Prediction')),
-      drawer: Sidebar(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -92,41 +95,25 @@ class _StockPredictionScreenState extends State<StockPredictionScreen> {
             ),
             SizedBox(height: 20),
 
-            // Button to fetch prediction
+            // Button to fetch prediction image
             ElevatedButton(
-              onPressed: _fetchPrediction,
-              child: Text('Predict Stock Price'),
+              onPressed: () async {
+                try {
+                  final imageData = await fetchPredictionImage();
+                  setState(() {
+                    imageBytes = imageData;
+                  });
+                } catch (e) {
+                  print('Error: $e');
+                }
+              },
+              child: Text('Get Prediction'),
             ),
 
-            // Display prediction results
-            Expanded(
-              child: FutureBuilder<PredictionResponse>(
-                future: futurePrediction,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (snapshot.hasData) {
-                    final prediction = snapshot.data!;
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Predictions for ${prediction.stockTicker}',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        Text('Prediction Dates: ${prediction.predictionDates.join(', ')}'),
-                        Text('Predicted Prices: ${prediction.predictedPrices.join(', ')}'),
-                        Image.network(prediction.imagePath), // Display the saved plot image
-                      ],
-                    );
-                  } else {
-                    return Center(child: Text('No data available'));
-                  }
-                },
-              ),
-            ),
+            // Display the prediction image
+            imageBytes != null
+                ? Image.memory(imageBytes!)
+                : Center(child: Text('No image available')),
           ],
         ),
       ),

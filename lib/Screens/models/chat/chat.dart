@@ -16,6 +16,10 @@ class _ChatBotState extends State<ChatPage> {
   String? errorMessage;
   bool isTyping = false;
   bool isLoadingInitial = true;
+  //'http://20.50.10.235:11434/api/generate',
+  //'http://10.0.2.2:11434/api/generate',
+  String LlmUrl = 'http://localhost:11434/api/generate';
+  //String LlmUrl = 'http://172.20.10.2:11434/api/generate';
 
   @override
   void initState() {
@@ -30,15 +34,11 @@ class _ChatBotState extends State<ChatPage> {
     });
 
     String initialPrompt =
-        "You are a compassionate and insightful psychologist Dr Fnine."
-        "Introduce yourself and ask the patient how you can help them today."
-        "All in one sentence";
+        "You are a compassionate and insightful psychologist named Dr Fnine. Introduce yourself and ask the patient how you can help them today. All in one sentence";
 
     try {
       var response = await http.post(
-        //Uri.parse('http://20.50.10.235:11434/api/generate'),
-        //Uri.parse('http://10.0.2.2:11434/api/generate'),
-        Uri.parse('http://localhost:11434/api/generate'),
+        Uri.parse(LlmUrl),
         headers: {"Content-Type": "application/json"},
         body: json.encode({"model": "llama3", "prompt": initialPrompt}),
       );
@@ -238,9 +238,7 @@ class _ChatBotState extends State<ChatPage> {
 
       try {
         var response = await http.post(
-          //Uri.parse('http://20.50.10.235:11434/api/generate'),
-          //Uri.parse('http://10.0.2.2:11434/api/generate'),
-          Uri.parse('http://localhost:11434/api/generate'),
+          Uri.parse(LlmUrl),
           headers: {"Content-Type": "application/json"},
           body: json.encode({"model": "llama3", "prompt": prompt}),
         );

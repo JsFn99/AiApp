@@ -1,24 +1,27 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Sidebar extends StatelessWidget {
-  final String email;
-
-  const Sidebar({super.key, required this.email});
+  const Sidebar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Fetch the current user's email
+    final User? user = FirebaseAuth.instance.currentUser;
+    final String email = user?.email ?? 'No email found';
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
           UserAccountsDrawerHeader(
-            accountName: const Text("User Name"),
             accountEmail: Text(email),
-            currentAccountPicture: const CircleAvatar(
+            currentAccountPicture: CircleAvatar(
               backgroundColor: Colors.white,
-              child: Icon(Icons.person, size: 40, color: Color(0xFF2661FA)),
+              backgroundImage: AssetImage('assets/images/user.png'),
             ),
             decoration: const BoxDecoration(color: Color(0xFF2661FA)),
+            accountName: null,
           ),
           ListTile(
             leading: const Icon(Icons.home),
@@ -57,8 +60,8 @@ class Sidebar extends StatelessWidget {
             leading: const Icon(Icons.auto_graph),
             title: const Text('Stock Prediction'),
             onTap: () {
-              if (ModalRoute.of(context)?.settings.name != '/register') {
-                Navigator.pushReplacementNamed(context, '/register');
+              if (ModalRoute.of(context)?.settings.name != '/stock') {
+                Navigator.pushReplacementNamed(context, '/stock');
               } else {
                 Navigator.pop(context);
               }
@@ -81,6 +84,17 @@ class Sidebar extends StatelessWidget {
             onTap: () {
               if (ModalRoute.of(context)?.settings.name != '/chat') {
                 Navigator.pushReplacementNamed(context, '/chat');
+              } else {
+                Navigator.pop(context);
+              }
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.camera_alt),
+            title: const Text('Object Detection'),
+            onTap: () {
+              if (ModalRoute.of(context)?.settings.name != '/camera') {
+                Navigator.pushReplacementNamed(context, '/camera');
               } else {
                 Navigator.pop(context);
               }

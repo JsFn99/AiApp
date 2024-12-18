@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "3340142064",
+    "project_id": "jasproj-8f9b3",
+    "storage_bucket": "jasproj-8f9b3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:3340142064:android:4ca3dc3fc2c215dda30935",
+        "android_client_info": {
+          "package_name": "com.fnine.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQ8jE5OO-oxWW6DvKmpTxZr8BY_DXLjr8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

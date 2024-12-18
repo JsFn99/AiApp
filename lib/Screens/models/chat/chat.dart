@@ -16,6 +16,10 @@ class _ChatBotState extends State<ChatPage> {
   String? errorMessage;
   bool isTyping = false;
   bool isLoadingInitial = true;
+  //'http://20.50.10.235:11434/api/generate',
+  //'http://10.0.2.2:11434/api/generate',
+  String LlmUrl = 'http://localhost:11434/api/generate';
+  //String LlmUrl = 'http://172.20.10.2:11434/api/generate';
 
   @override
   void initState() {
@@ -30,14 +34,11 @@ class _ChatBotState extends State<ChatPage> {
     });
 
     String initialPrompt =
-        "You are a compassionate and insightful psychologist. Greet the user warmly and ask them how you can help them today. "
-        "Encourage them to share their thoughts and feelings in a safe and understanding space."
-        "Keep your responses brief and to the point, and encourage the user to elaborate on their thoughts and feelings."
-        "Make sure your responses are psychologically accurate and offer support and guidance when appropriate.";
+        "You are a compassionate and insightful psychologist named Dr Fnine. Introduce yourself and ask the patient how you can help them today. All in one sentence";
 
     try {
       var response = await http.post(
-        Uri.parse('http://localhost:11434/api/generate'),
+        Uri.parse(LlmUrl),
         headers: {"Content-Type": "application/json"},
         body: json.encode({"model": "llama3", "prompt": initialPrompt}),
       );
@@ -88,7 +89,6 @@ class _ChatBotState extends State<ChatPage> {
         centerTitle: true,
       ),
       drawer: Sidebar(
-        email: 'test@gmail.com',
       ),
       body: SafeArea(
         child: Column(
@@ -228,12 +228,19 @@ class _ChatBotState extends State<ChatPage> {
 
       queryController.clear();
 
+      String prompt = "You are a psychologist. Keep your answers psychologically accurate and short no more than 2-3 sentences. The user says : " + query;
+
+      if (messages.length > 1) {
+        String lastMessage = messages[messages.length - 2]['message']!;
+        String lastResponse = messages[messages.length - 1]['message']!;
+        prompt = "You are a psychologist. Keep your answers psychologically accurate and short no more than 2-3 sentences. The last exchange was : User : " + lastResponse  + " Model : " + lastMessage + ". Now The user says: " + query;
+      }
+
       try {
         var response = await http.post(
-          //Uri.parse('http://10.0.2.2:11434/api/generate'),
-        Uri.parse('http://localhost:11434/api/generate'),
+          Uri.parse(LlmUrl),
           headers: {"Content-Type": "application/json"},
-          body: json.encode({"model": "llama3", "prompt": query}),
+          body: json.encode({"model": "llama3", "prompt": prompt}),
         );
 
         if (response.statusCode == 200) {

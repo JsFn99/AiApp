@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 
+import '../../../components/sidebar.dart';
+
 class GeminiChat extends StatefulWidget {
   const GeminiChat({Key? key}) : super(key: key);
 
@@ -59,6 +61,7 @@ class _GeminiChatState extends State<GeminiChat> {
         title: const Text('Gemini 1.5 Chatbot'),
         centerTitle: true,
       ),
+      drawer: const Sidebar(),
       body: Column(
         children: [
           Expanded(

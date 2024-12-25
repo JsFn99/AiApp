@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import '../../../components/sidebar.dart';
 
@@ -27,9 +28,9 @@ class _GeminiChatState extends State<GeminiChat> {
   }
 
   Future<void> _initializeGemini() async {
-    const apiKey = 'AIzaSyCKpaedXWlht53mo2EHcu-GBWY7Ym9Z1R8';
+    var apiKey = Platform.environment['GEMINI_API_KEY'];
     try {
-      await Gemini.init(apiKey: apiKey);
+      await Gemini.init(apiKey: apiKey ?? '');
     } catch (e) {
       print('Failed to initialize Gemini: $e');
     }

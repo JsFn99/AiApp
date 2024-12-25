@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
-
 import '../../../components/sidebar.dart';
 
 class GeminiChat extends StatefulWidget {
@@ -14,13 +13,19 @@ class _GeminiChatState extends State<GeminiChat> {
   final TextEditingController _controller = TextEditingController();
   List<Map<String, String>> messages = [];
 
+  double temperature = 0.75;
+  double topP = 0.9;
+  double topK = 40.0; // Changed to double
+  int maxOutputTokens = 512;
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     super.initState();
     _initializeGemini();
   }
 
-  // Initialize Gemini API with the provided API key
   Future<void> _initializeGemini() async {
     const apiKey = 'AIzaSyCKpaedXWlht53mo2EHcu-GBWY7Ym9Z1R8';
     try {
@@ -30,7 +35,6 @@ class _GeminiChatState extends State<GeminiChat> {
     }
   }
 
-  // Method to send a prompt to Gemini and get a response
   Future<void> _sendMessage(String prompt) async {
     if (prompt.isEmpty) return;
 
@@ -39,9 +43,17 @@ class _GeminiChatState extends State<GeminiChat> {
     });
 
     try {
-      final response = await Gemini.instance.chat([
-        Content(parts: [Part.text(prompt)], role: 'user'),
-      ]);
+      final response = await Gemini.instance.chat(
+        [
+          Content(parts: [Part.text(prompt)], role: 'user'),
+        ],
+        generationConfig: GenerationConfig(
+          temperature: temperature,
+          topP: topP,
+          topK: topK.toInt(),
+          maxOutputTokens: maxOutputTokens,
+        ),
+      );
 
       setState(() {
         messages.add({'role': 'assistant', 'content': response?.output ?? 'No response'});
@@ -57,11 +69,117 @@ class _GeminiChatState extends State<GeminiChat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: const Text('Gemini 1.5 Chatbot'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              _scaffoldKey.currentState?.openEndDrawer();
+            },
+          ),
+        ],
       ),
-      drawer: const Sidebar(),
+      drawer: const Sidebar(), // Original sidebar remains here
+      endDrawer: Drawer( // New right-side drawer for parameters
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            // space
+            const SizedBox(height: 200),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Temperature', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(temperature.toStringAsFixed(2)),
+                  Slider(
+                    value: temperature,
+                    min: 0.0,
+                    max: 1.0,
+                    divisions: 10,
+                    label: temperature.toStringAsFixed(2),
+                    onChanged: (value) {
+                      setState(() {
+                        temperature = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Top P', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(topP.toStringAsFixed(2)),
+                  Slider(
+                    value: topP,
+                    min: 0.0,
+                    max: 1.0,
+                    divisions: 10,
+                    label: topP.toStringAsFixed(2),
+                    onChanged: (value) {
+                      setState(() {
+                        topP = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Top K', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(topK.toStringAsFixed(2)), // Show as a string with two decimals
+                  Slider(
+                    value: topK,
+                    min: 1.0,
+                    max: 100.0,
+                    divisions: 10,
+                    label: topK.toStringAsFixed(2),
+                    onChanged: (value) {
+                      setState(() {
+                        topK = value; // No need to cast to int
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Max Output Tokens', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(maxOutputTokens.toString()),
+                  Slider(
+                    value: maxOutputTokens.toDouble(),
+                    min: 1.0,
+                    max: 2048.0,
+                    divisions: 20,
+                    label: maxOutputTokens.toString(),
+                    onChanged: (value) {
+                      setState(() {
+                        maxOutputTokens = value.toInt();
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
       body: Column(
         children: [
           Expanded(

@@ -26,7 +26,7 @@ class PredictionResponse {
 
 Future<PredictionResponse> fetchStockPrediction(
     String ticker, String startDate, String endDate, int daysToPredict) async {
-  const String apiUrl = 'http://localhost:8000/predict/';
+  const String apiUrl = 'http://0.0.0.0:8080/predict/';
 
     final response = await http.post(
       Uri.parse(apiUrl),

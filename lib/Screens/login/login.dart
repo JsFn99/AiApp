@@ -97,17 +97,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscureText: true,
               ),
             ),
-            Container(
-              alignment: Alignment.centerRight,
-              margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-              child: const Text(
-                "Forgot your password?",
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Color(0XFF2661FA),
-                ),
-              ),
-            ),
             SizedBox(height: size.height * 0.05),
             Container(
               alignment: Alignment.centerRight,
@@ -125,8 +114,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [
-                        Color.fromARGB(225, 227, 69, 69),
-                        Color.fromARGB(220, 161, 21, 21)
+                        Color.fromARGB(225, 69, 203, 227),
+                        Color.fromARGB(220, 21, 70, 161)
                       ],
                     ),
                     borderRadius: BorderRadius.circular(80.0),

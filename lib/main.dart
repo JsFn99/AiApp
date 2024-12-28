@@ -5,6 +5,7 @@ import 'package:jasser_app/Screens/login/login.dart';
 import 'package:jasser_app/Screens/register/register.dart';
 
 import 'Screens/models/chat/chat.dart';
+import 'Screens/models/chat/gemini_chat.dart';
 import 'Screens/models/fashion/fashion_predict.dart';
 import 'Screens/models/fruit/fruits_predict.dart';
 import 'Screens/models/sentiment/sentiment_screen.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         '/chat': (context) => ChatPage(),
         '/camera': (context) => CameraScreen(),
         '/stock': (context) => StockPredictionScreen(),
+        '/gemini': (context) => GeminiChat(),
       },
     );
   }

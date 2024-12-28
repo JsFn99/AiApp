@@ -90,11 +90,11 @@ class Sidebar extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.camera_alt),
+            leading: const Icon(Icons.computer),
             title: const Text('Object Detection'),
             onTap: () {
-              if (ModalRoute.of(context)?.settings.name != '/camera') {
-                Navigator.pushReplacementNamed(context, '/camera');
+              if (ModalRoute.of(context)?.settings.name != '/gemini') {
+                Navigator.pushReplacementNamed(context, '/gemini');
               } else {
                 Navigator.pop(context);
               }

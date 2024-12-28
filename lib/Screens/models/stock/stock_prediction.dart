@@ -34,7 +34,7 @@ class _StockPredictionScreenState extends State<StockPredictionScreen> {
     final daysToPredict = int.parse(_daysToPredictController.text);
 
     final response = await http.post(
-      Uri.parse('http://localhost:8000/predict/'),
+      Uri.parse('http://0.0.0.0:8080/predict/'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({
         'stock_ticker': stockTicker,

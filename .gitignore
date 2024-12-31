@@ -43,3 +43,7 @@ app.*.map.json
 /android/app/release
 
 .fake
+
+# personal
+/assets/images/user.jpg
+/assets/images/user.png

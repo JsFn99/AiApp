@@ -281,6 +281,5 @@ class _ChatBotState extends State<ChatPage> {
       }
     });
   }
-
 }
 

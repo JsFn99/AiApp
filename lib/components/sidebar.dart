@@ -91,7 +91,7 @@ class Sidebar extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.computer),
-            title: const Text('Object Detection'),
+            title: const Text('Gemini 1.5 Chatbot'),
             onTap: () {
               if (ModalRoute.of(context)?.settings.name != '/gemini') {
                 Navigator.pushReplacementNamed(context, '/gemini');

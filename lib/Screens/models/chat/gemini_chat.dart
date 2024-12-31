@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
 import 'package:flutter_gemini/flutter_gemini.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../../components/sidebar.dart';
 
 class GeminiChat extends StatefulWidget {
@@ -12,14 +12,15 @@ class GeminiChat extends StatefulWidget {
 
 class _GeminiChatState extends State<GeminiChat> {
   final TextEditingController _controller = TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final ScrollController _scrollController = ScrollController();
+
   List<Map<String, String>> messages = [];
 
-  double temperature = 0.75;
+  double temperature = 0.25;
   double topP = 0.9;
-  double topK = 40.0; // Changed to double
+  double topK = 40.0;
   int maxOutputTokens = 512;
-
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -28,9 +29,10 @@ class _GeminiChatState extends State<GeminiChat> {
   }
 
   Future<void> _initializeGemini() async {
-    var apiKey = Platform.environment['GEMINI_API_KEY'];
+    // var apiKey = environment.get('GEMINI_API_KEY');
+    var apiKey = 'AIzaSyCKpaedXWlht53mo2EHcu-GBWY7Ym9Z1R8';
     try {
-      await Gemini.init(apiKey: apiKey ?? '');
+      await Gemini.init(apiKey: apiKey);
     } catch (e) {
       print('Failed to initialize Gemini: $e');
     }
@@ -42,6 +44,7 @@ class _GeminiChatState extends State<GeminiChat> {
     setState(() {
       messages.add({'role': 'user', 'content': prompt});
     });
+    _scrollToBottom();
 
     try {
       final response = await Gemini.instance.chat(
@@ -65,6 +68,17 @@ class _GeminiChatState extends State<GeminiChat> {
         messages.add({'role': 'assistant', 'content': 'An error occurred while generating a response.'});
       });
     }
+    _scrollToBottom();
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    });
   }
 
   @override
@@ -83,101 +97,36 @@ class _GeminiChatState extends State<GeminiChat> {
           ),
         ],
       ),
-      drawer: const Sidebar(), // Original sidebar remains here
-      endDrawer: Drawer( // New right-side drawer for parameters
+      drawer: const Sidebar(),
+      endDrawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            // space
-            const SizedBox(height: 200),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Temperature', style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(temperature.toStringAsFixed(2)),
-                  Slider(
-                    value: temperature,
-                    min: 0.0,
-                    max: 1.0,
-                    divisions: 10,
-                    label: temperature.toStringAsFixed(2),
-                    onChanged: (value) {
-                      setState(() {
-                        temperature = value;
-                      });
-                    },
-                  ),
-                ],
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Color(0xFF2661FA),
+              ),
+              child: Text(
+                'Parameters',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Top P', style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(topP.toStringAsFixed(2)),
-                  Slider(
-                    value: topP,
-                    min: 0.0,
-                    max: 1.0,
-                    divisions: 10,
-                    label: topP.toStringAsFixed(2),
-                    onChanged: (value) {
-                      setState(() {
-                        topP = value;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Top K', style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(topK.toStringAsFixed(2)), // Show as a string with two decimals
-                  Slider(
-                    value: topK,
-                    min: 1.0,
-                    max: 100.0,
-                    divisions: 10,
-                    label: topK.toStringAsFixed(2),
-                    onChanged: (value) {
-                      setState(() {
-                        topK = value; // No need to cast to int
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Max Output Tokens', style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(maxOutputTokens.toString()),
-                  Slider(
-                    value: maxOutputTokens.toDouble(),
-                    min: 1.0,
-                    max: 2048.0,
-                    divisions: 20,
-                    label: maxOutputTokens.toString(),
-                    onChanged: (value) {
-                      setState(() {
-                        maxOutputTokens = value.toInt();
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
+            _buildSlider('Temperature', temperature, 0.0, 1.0, 10, (value) {
+              setState(() => temperature = value);
+            }),
+            _buildSlider('Top P', topP, 0.0, 1.0, 10, (value) {
+              setState(() => topP = value);
+            }),
+            _buildSlider('Top K', topK, 1.0, 100.0, 10, (value) {
+              setState(() => topK = value);
+            }),
+            _buildSlider('Max Output Tokens', maxOutputTokens.toDouble(), 1.0, 2048.0, 20, (value) {
+              setState(() => maxOutputTokens = value.toInt());
+            }),
           ],
         ),
       ),
@@ -185,23 +134,34 @@ class _GeminiChatState extends State<GeminiChat> {
         children: [
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 final message = messages[index];
-                return ListTile(
-                  title: Align(
-                    alignment: message['role'] == 'user'
-                        ? Alignment.centerRight
-                        : Alignment.centerLeft,
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: message['role'] == 'user' ? Colors.blue : Colors.grey,
-                        borderRadius: BorderRadius.circular(10),
+                return Align(
+                  alignment: message['role'] == 'user' ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: message['role'] == 'user' ? Colors.blue : Colors.black12,
+                      borderRadius: BorderRadius.only(
+                        topLeft: const Radius.circular(12),
+                        topRight: const Radius.circular(12),
+                        bottomLeft: message['role'] == 'user' ? const Radius.circular(12) : Radius.zero,
+                        bottomRight: message['role'] == 'user' ? Radius.zero : const Radius.circular(12),
                       ),
-                      child: Text(
-                        message['content']!,
-                        style: const TextStyle(color: Colors.white),
+                    ),
+                    child: message['role'] == 'user'
+                        ? Text(
+                      message['content']!,
+                      style: const TextStyle(color: Colors.white),
+                    )
+                        : MarkdownBody(
+                      data: message['content']!,
+                      selectable: true,
+                      styleSheet: MarkdownStyleSheet(
+                        p: const TextStyle(color: Colors.black),
                       ),
                     ),
                   ),
@@ -216,21 +176,51 @@ class _GeminiChatState extends State<GeminiChat> {
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: 'Ask something...',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
+                    onSubmitted: (value) {
+                      _sendMessage(value);
+                      _controller.clear();
+                    },
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.send),
+                const SizedBox(width: 8),
+                FloatingActionButton(
                   onPressed: () {
                     _sendMessage(_controller.text);
                     _controller.clear();
                   },
+                  child: const Icon(Icons.send, color: Colors.white),
+                  backgroundColor: Colors.blue,
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSlider(String title, double value, double min, double max, int divisions, ValueChanged<double> onChanged) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(value.toStringAsFixed(2)),
+          Slider(
+            value: value,
+            min: min,
+            max: max,
+            divisions: divisions,
+            label: value.toStringAsFixed(2),
+            onChanged: onChanged,
+            activeColor: Colors.blue,
           ),
         ],
       ),
